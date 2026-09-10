@@ -33,5 +33,5 @@ COPY ./_docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 RUN usermod -u 1000 www-data
 RUN chmod 777 -R /tmp && chmod o+t -R /tmp
 
-WORKDIR /var/www
+WORKDIR /var/www/html
 

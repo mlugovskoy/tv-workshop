@@ -30,3 +30,14 @@ services:
         volumes:
             - ./:/var/www/html
         container_name: app_php
+
+    node:
+        image: node:22-alpine
+        user: "node"
+        working_dir: /var/www/html
+        volumes:
+            - ./:/var/www/html
+        ports:
+            - "5173:5173"
+        command: npm run dev -- --host 0.0.0.0
+        container_name: tv_workshop_node
