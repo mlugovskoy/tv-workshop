@@ -1,12 +1,10 @@
-<script setup>
+<script setup lang="ts">
 
+import MainLayout from "./components/MainLayout.vue";
 </script>
 
 <template>
-    <div>
-        <h1>TV Workshop</h1>
-        <p>CRM мастерской по ремонту телевизоров</p>
-    </div>
+    <MainLayout/>
 </template>
 
 <style scoped>

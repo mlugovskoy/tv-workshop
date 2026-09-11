@@ -6,7 +6,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <title>TV Workshop</title>
+    <title>Мастерская</title>
 </head>
 <body>
 <div id="app"></div>
