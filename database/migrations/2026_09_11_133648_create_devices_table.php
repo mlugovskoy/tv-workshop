@@ -13,10 +13,12 @@ return new class extends Migration {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients');
+
             $table->string('brand');
             $table->string('model');
             $table->string('serial_number')->nullable();
             $table->text('comment')->nullable();
+
             $table->timestamps();
         });
     }

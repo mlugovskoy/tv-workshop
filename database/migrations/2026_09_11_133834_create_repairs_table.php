@@ -14,15 +14,20 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('client_id')->constrained('clients');
             $table->foreignId('device_id')->constrained('devices');
+
             $table->string('status');
+
             $table->text('problem_description');
             $table->text('diagnosis')->nullable();
             $table->text('repair_description')->nullable();
+
             $table->decimal('estimated_price', 6)->nullable();
             $table->decimal('final_price', 6)->nullable();
+
             $table->timestamp('received_at');
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('issued_at')->nullable();
+
             $table->timestamps();
         });
     }
