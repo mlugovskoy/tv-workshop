@@ -19,11 +19,20 @@ class ClientController extends Controller
         $data = $request->validated();
 
         $perPage = $data['per_page'] ?? 9;
+        $search = $data['search'] ?? null;
+
+        $query = Client::query()->orderByDesc('created_at');
+
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->where('name_search', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
 
         return ClientResource::collection(
-            Client::query()
-                ->orderByDesc('created_at')
-                ->paginate($perPage)
+            $query->paginate($perPage)
         );
     }
 
@@ -46,10 +55,16 @@ class ClientController extends Controller
         return response()->json(new ClientResource($client));
     }
 
-    public function destroy(Client $client): Response
+    public function destroy(Client $client): JsonResponse
     {
+        if ($client->devices()->exists() || $client->repairs()->exists()) {
+            return response()->json([
+                'message' => 'Нельзя удалить клиента, у которого есть устройства или ремонты.',
+            ], 409);
+        }
+
         $client->delete();
 
-        return response()->noContent();
+        return response()->json(null, 204);
     }
 }

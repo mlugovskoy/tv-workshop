@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import PageTitle from "./PageTitle.vue";
+import Notification from "./Notification.vue";
 </script>
 
 <template>
@@ -46,9 +47,7 @@ import PageTitle from "./PageTitle.vue";
         <main class="flex-1 p-8">
             <RouterView/>
         </main>
+
+        <Notification />
     </div>
 </template>
-
-<style scoped>
-
-</style>

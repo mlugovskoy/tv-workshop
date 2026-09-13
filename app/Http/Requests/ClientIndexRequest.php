@@ -23,7 +23,8 @@ class ClientIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'per_page' => ['integer', 'min:1', 'max:50']
+            'per_page' => ['integer', 'min:1', 'max:50'],
+            'search' => ['nullable', 'string', 'max:100']
         ];
     }
 }

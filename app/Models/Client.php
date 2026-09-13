@@ -38,4 +38,9 @@ class Client extends Model
             get: fn() => Carbon::parse($this->updated_at)->format('d.m.y h:s')
         );
     }
+
+    protected static function booted(): void
+    {
+        static::saving(fn(Client $client) => $client->name_search = mb_strtolower($client->name));
+    }
 }
