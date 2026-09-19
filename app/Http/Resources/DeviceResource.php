@@ -24,8 +24,8 @@ class DeviceResource extends JsonResource
             'model' => $this->model,
             'serial_number' => $this->serial_number,
             'comment' => $this->comment,
-            'created_at' => $this->createdAtFormatted,
-            'updated_at' => $this->updatedAtFormatted
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

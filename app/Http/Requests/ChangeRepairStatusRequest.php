@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\RepairStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
-class RepairUpdateRequest extends FormRequest
+class ChangeRepairStatusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +25,7 @@ class RepairUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-//            'status' => ['sometimes', 'string'],
-            'problem_description' => ['sometimes', 'string'],
-            'diagnosis' => ['sometimes', 'nullable', 'string'],
-            'repair_description' => ['sometimes', 'nullable', 'string'],
-            'estimated_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
-            'final_price' => ['sometimes', 'nullable', 'numeric', 'min:0']
+            'status' => ['required', new Enum(RepairStatus::class)]
         ];
     }
 }

@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import PageTitle from "../components/PageTitle.vue";
-import DefaultButton from "../components/DefaultButton.vue";
-import DefaultTable from "../components/DefaultTable.vue";
+import PageTitle from "../../components/PageTitle.vue";
+import DefaultButton from "../../components/DefaultButton.vue";
+import DefaultTable from "../../components/DefaultTable.vue";
 import {useRouter} from "vue-router";
-import Pagination from "../components/Pagination.vue";
-import EditIcon from "../components/icons/EditIcon.vue";
-import DeleteIcon from "../components/icons/DeleteIcon.vue";
-import SearchInput from "../components/SearchInput.vue";
+import Pagination from "../../components/Pagination.vue";
+import EditIcon from "../../components/icons/EditIcon.vue";
+import DeleteIcon from "../../components/icons/DeleteIcon.vue";
 import {onMounted, ref} from "vue";
-import {useNotification} from "../composables/useNotification";
+import {useNotification} from "../../composables/useNotification";
+import {formatDateList} from "../../utils/formatDate";
+import {formatPrice} from "../../utils/formatPrice";
+import {repairStatusLabels} from "../../utils/repairStatusLabels";
 
 interface Repair {
     id: number;
@@ -31,8 +33,8 @@ interface Repair {
     diagnosis: string | null;
     repair_description: string | null;
 
-    estimated_price: number | null;
-    final_price: number | null;
+    estimated_price: string | null;
+    final_price: string | null;
 
     received_at: string;
     completed_at: string | null;
@@ -56,23 +58,27 @@ const columnsTable = [
     {key: 'id', label: 'ID'},
     {key: 'client', label: 'Клиент'},
     {key: 'device', label: 'Устройство'},
-    {key: 'problem_description', label: 'Проблема'},
-    {key: 'diagnosis', label: 'Диагностика'},
-    {key: 'repair_description', label: 'Что сделано'},
     {key: 'status', label: 'Статус'},
     {key: 'estimated_price', label: 'Предварительная цена'},
     {key: 'final_price', label: 'Итоговая цена'},
-    {key: 'received_at', label: 'Дата приёма'},
-    {key: 'completed_at', label: 'Дата завершения'},
-    {key: 'issued_at', label: 'Дата выдачи'},
+    {key: 'received_at', label: 'Дата приёма'}
 ];
 
 const createRepair = () => {
     router.push({name: 'repairs.create'})
 }
+
+const showRepair = (id: number) => {
+    router.push({
+        name: 'repairs.show',
+        params: {
+            id
+        }
+    });
+};
 const editRepair = (id: number) => {
     router.push({
-        name: 'repair.edit',
+        name: 'repairs.edit',
         params: {
             id
         }
@@ -99,6 +105,15 @@ const loadRepairs = async () => {
 }
 
 const deleteRepair = async (id: number) => {
+    const confirmed = window.confirm(
+        'Вы уверены, что хотите удалить этот ремонт?'
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+
     try {
         const response = await fetch(`/api/repairs/${id}`, {
             method: 'DELETE',
@@ -142,11 +157,32 @@ onMounted(loadRepairs);
     </div>
 
     <DefaultTable :columns="columnsTable" :rows="repairs" v-if="repairs.length > 0">
+        <template #id="{ row }">
+            <button
+                type="button"
+                class="cursor-pointer text-blue-600 p-2 hover:text-blue-800 underline hover:no-underline"
+                @click="showRepair(row.id)"
+            >
+                {{ row.id }}
+            </button>
+        </template>
         <template #client="{ row }">
             {{ row.client.name }}
         </template>
+        <template #status="{ row }">
+            {{ repairStatusLabels[row.status] ?? row.status }}
+        </template>
         <template #device="{ row }">
             {{ row.device.brand }} {{ row.device.model }}
+        </template>
+        <template #estimated_price="{ row }">
+            {{ formatPrice(row.estimated_price) ?? row.estimated_price }}
+        </template>
+        <template #final_price="{ row }">
+            {{ formatPrice(row.final_price) ?? row.final_price }}
+        </template>
+        <template #received_at="{ row }">
+            {{ formatDateList(row.received_at) ?? row.received_at }}
         </template>
         <template #actions="{ row }">
             <button type="button"

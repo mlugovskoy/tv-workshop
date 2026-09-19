@@ -1,15 +1,17 @@
 import {createRouter, createWebHistory} from 'vue-router';
 
 import Dashboard from '../views/Dashboard.vue';
-import Repairs from '../views/Repairs.vue';
-import Clients from '../views/Clients.vue';
+import Repairs from '../views/Repair/Repairs.vue';
+import Clients from '../views/Client/Clients.vue';
 import Parts from '../views/Parts.vue';
-import CreateRepair from '../views/CreateRepair.vue';
-import CreateClient from '../views/CreateClient.vue';
-import EditClient from "../views/EditClient.vue";
-import Devices from "../views/Devices.vue";
-import CreateDevice from "../views/CreateDevice.vue";
-import EditDevice from "../views/EditDevice.vue";
+import CreateRepair from '../views/Repair/CreateRepair.vue';
+import CreateClient from '../views/Client/CreateClient.vue';
+import EditClient from "../views/Client/EditClient.vue";
+import Devices from "../views/Device/Devices.vue";
+import CreateDevice from "../views/Device/CreateDevice.vue";
+import EditDevice from "../views/Device/EditDevice.vue";
+import EditRepair from "../views/Repair/EditRepair.vue";
+import ShowRepair from "../views/Repair/ShowRepair.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -44,6 +46,16 @@ const router = createRouter({
             path: '/repairs/create',
             name: 'repairs.create',
             component: CreateRepair,
+        },
+        {
+            path: '/repairs/:id/edit',
+            name: 'repairs.edit',
+            component: EditRepair,
+        },
+        {
+            path: '/repairs/:id',
+            name: 'repairs.show',
+            component: ShowRepair,
         },
         {
             path: '/clients',

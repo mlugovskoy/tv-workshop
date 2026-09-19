@@ -20,8 +20,8 @@ class ClientResource extends JsonResource
             'name_search' => $this->name_search,
             'phone' => $this->phone,
             'comment' => $this->comment,
-            'created_at' => $this->createdAtFormatted,
-            'updated_at' => $this->updatedAtFormatted
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

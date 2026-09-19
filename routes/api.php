@@ -10,3 +10,4 @@ Route::get('/device/clients', [ClientController::class, 'deviceClients'])->name(
 
 Route::apiResource('devices', DeviceController::class);
 Route::apiResource('repairs', RepairController::class);
+Route::patch('repairs/{repair}/status', [RepairController::class, 'changeStatus'])->name('repairs.status');

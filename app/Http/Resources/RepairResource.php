@@ -42,8 +42,8 @@ class RepairResource extends JsonResource
                 'serial_number' => $this->device->serial_number,
             ],
 
-            'created_at' => $this->createdAtFormatted,
-            'updated_at' => $this->updatedAtFormatted
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {useRoute, useRouter} from 'vue-router';
 import {onMounted, reactive, ref} from "vue";
-import PageTitle from "../components/PageTitle.vue";
-import DefaultButton from "../components/DefaultButton.vue";
-import {useNotification} from "../composables/useNotification";
+import PageTitle from "../../components/PageTitle.vue";
+import DefaultButton from "../../components/DefaultButton.vue";
+import {useNotification} from "../../composables/useNotification";
 
 interface Client {
     id: number;
@@ -96,16 +96,16 @@ const loadClients = async () => {
     }
 }
 
-const loadDevices = async () => {
+const loadDevice = async () => {
     try {
-        const clientResponse = await fetch(`/api/devices/${route.params.id}`);
+        const deviceResponse = await fetch(`/api/devices/${route.params.id}`);
 
-        if (!clientResponse.ok) {
+        if (!deviceResponse.ok) {
             showError('Не удалось загрузить устройство');
             return;
         }
 
-        const response = await clientResponse.json();
+        const response = await deviceResponse.json();
         form.client_id = response.data.client.id;
         form.brand = response.data.brand;
         form.model = response.data.model;
@@ -119,7 +119,7 @@ const loadDevices = async () => {
 
 onMounted(async () => {
  await Promise.all([
-     loadDevices(),
+     loadDevice(),
      loadClients()
  ])
 });

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import PageTitle from "../components/PageTitle.vue";
-import DefaultTable from "../components/DefaultTable.vue";
-import DefaultButton from "../components/DefaultButton.vue";
-import {useNotification} from "../composables/useNotification";
-import Pagination from "../components/Pagination.vue";
-import DeleteIcon from "../components/icons/DeleteIcon.vue";
-import EditIcon from "../components/icons/EditIcon.vue";
-import SearchInput from "../components/SearchInput.vue";
+import PageTitle from "../../components/PageTitle.vue";
+import DefaultTable from "../../components/DefaultTable.vue";
+import DefaultButton from "../../components/DefaultButton.vue";
+import {useNotification} from "../../composables/useNotification";
+import Pagination from "../../components/Pagination.vue";
+import DeleteIcon from "../../components/icons/DeleteIcon.vue";
+import EditIcon from "../../components/icons/EditIcon.vue";
+import SearchInput from "../../components/SearchInput.vue";
 
 interface Client {
     id: number;
@@ -78,6 +78,14 @@ const searchClient = async () => {
 }
 
 const deleteClient = async (id: number) => {
+    const confirmed = window.confirm(
+        'Вы уверены, что хотите удалить этого клиента?'
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
     try {
         const response = await fetch(`/api/clients/${id}`, {
             method: 'DELETE',

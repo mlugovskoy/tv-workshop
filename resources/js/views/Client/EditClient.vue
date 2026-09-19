@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {useRoute, useRouter} from 'vue-router';
 import {onMounted, reactive, ref} from "vue";
-import PageTitle from "../components/PageTitle.vue";
-import DefaultButton from "../components/DefaultButton.vue";
-import {useNotification} from "../composables/useNotification";
+import PageTitle from "../../components/PageTitle.vue";
+import DefaultButton from "../../components/DefaultButton.vue";
+import {useNotification} from "../../composables/useNotification";
 
 interface ClientForm {
     name: string;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
-import PageTitle from "../components/PageTitle.vue";
-import DefaultButton from "../components/DefaultButton.vue";
-import {useNotification} from "../composables/useNotification";
+import PageTitle from "../../components/PageTitle.vue";
+import DefaultButton from "../../components/DefaultButton.vue";
+import {useNotification} from "../../composables/useNotification";
 import {useRouter} from "vue-router";
 
 interface Client {
