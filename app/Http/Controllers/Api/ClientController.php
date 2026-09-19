@@ -10,10 +10,14 @@ use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
 
 class ClientController extends Controller
 {
+    public function deviceClients(): AnonymousResourceCollection
+    {
+        return ClientResource::collection(Client::all());
+    }
+
     public function index(ClientIndexRequest $request): AnonymousResourceCollection
     {
         $data = $request->validated();
@@ -24,6 +28,8 @@ class ClientController extends Controller
         $query = Client::query()->orderByDesc('created_at');
 
         if ($search) {
+            $search = mb_strtolower($search);
+
             $query->where(function ($query) use ($search) {
                 $query
                     ->where('name_search', 'like', "%{$search}%")

@@ -14,6 +14,3 @@ withDefaults(defineProps<{
         <p v-if="subtitle" class="mt-1 text-sm text-slate-600">{{ subtitle }}</p>
     </div>
 </template>
-
-<style scoped>
-</style>

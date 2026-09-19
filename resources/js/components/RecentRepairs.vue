@@ -15,7 +15,3 @@ const items = []
         </p>
     </section>
 </template>
-
-<style scoped>
-
-</style>

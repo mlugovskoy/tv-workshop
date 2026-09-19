@@ -35,6 +35,14 @@ import Notification from "./Notification.vue";
                 </RouterLink>
 
                 <RouterLink
+                    to="/devices"
+                    class="rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    active-class="bg-blue-50 text-blue-700"
+                >
+                    Устройства
+                </RouterLink>
+
+                <RouterLink
                     to="/parts"
                     class="rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     active-class="bg-blue-50 text-blue-700"

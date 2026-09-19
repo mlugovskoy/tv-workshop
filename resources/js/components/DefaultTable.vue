@@ -35,7 +35,9 @@ defineProps<Props>();
                 <td class="px-6 py-4 font-medium text-gray-900"
                     v-for="column in columns"
                     :key="column.key">
-                    {{ row[column.key] }}
+                    <slot :name="column.key" :row="row">
+                        {{ row[column.key] }}
+                    </slot>
                 </td>
 
                 <td class="px-6 py-4 flex items-center gap-2">

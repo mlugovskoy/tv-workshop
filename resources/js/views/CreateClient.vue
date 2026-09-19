@@ -2,8 +2,8 @@
 import {reactive, ref} from "vue";
 import PageTitle from "../components/PageTitle.vue";
 import DefaultButton from "../components/DefaultButton.vue";
-import router from "../router";
 import {useNotification} from "../composables/useNotification";
+import {useRouter} from "vue-router";
 
 interface ClientForm {
     name: string;
@@ -17,6 +17,7 @@ interface ValidationErrors {
     comment?: string[];
 }
 
+const router = useRouter();
 const isSubmitting = ref(false);
 const errors = reactive<ValidationErrors>({});
 const form = reactive<ClientForm>({

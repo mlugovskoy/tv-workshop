@@ -34,7 +34,3 @@ const stats = [
         </div>
     </div>
 </template>
-
-<style scoped>
-
-</style>

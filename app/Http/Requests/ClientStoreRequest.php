@@ -23,9 +23,9 @@ class ClientStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'phone' => 'nullable|string',
-            'comment' => 'nullable|string'
+            'name' => ['required', 'string'],
+            'phone' => ['nullable', 'string'],
+            'comment' => ['nullable', 'string']
         ];
     }
 }

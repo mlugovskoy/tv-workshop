@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ClientUpdateRequest extends FormRequest
+class DeviceIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,9 @@ class ClientUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
-            'phone' => ['nullable', 'string'],
-            'comment' => ['nullable', 'string']
+            'per_page' => ['integer', 'min:1', 'max:50'],
+            'search' => ['nullable', 'string', 'max:100'],
+            'client_id' => ['nullable', 'integer', 'exists:clients,id'],
         ];
     }
 }

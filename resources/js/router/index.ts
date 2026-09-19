@@ -7,6 +7,9 @@ import Parts from '../views/Parts.vue';
 import CreateRepair from '../views/CreateRepair.vue';
 import CreateClient from '../views/CreateClient.vue';
 import EditClient from "../views/EditClient.vue";
+import Devices from "../views/Devices.vue";
+import CreateDevice from "../views/CreateDevice.vue";
+import EditDevice from "../views/EditDevice.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -16,6 +19,21 @@ const router = createRouter({
             path: '/',
             name: 'dashboard',
             component: Dashboard,
+        },
+        {
+            path: '/devices',
+            name: 'devices',
+            component: Devices,
+        },
+        {
+            path: '/devices/create',
+            name: 'devices.create',
+            component: CreateDevice,
+        },
+        {
+            path: '/devices/:id/edit',
+            name: 'devices.edit',
+            component: EditDevice,
         },
         {
             path: '/repairs',

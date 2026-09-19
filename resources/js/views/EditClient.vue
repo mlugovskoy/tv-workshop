@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import {useRoute} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import {onMounted, reactive, ref} from "vue";
 import PageTitle from "../components/PageTitle.vue";
 import DefaultButton from "../components/DefaultButton.vue";
-import router from "../router";
 import {useNotification} from "../composables/useNotification";
 
 interface ClientForm {
@@ -18,6 +17,7 @@ interface ValidationErrors {
     comment?: string[];
 }
 
+const router = useRouter();
 const isSubmitting = ref(false);
 const errors = reactive<ValidationErrors>({});
 const route = useRoute();

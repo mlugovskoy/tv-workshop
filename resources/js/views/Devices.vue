@@ -10,15 +10,20 @@ import DeleteIcon from "../components/icons/DeleteIcon.vue";
 import EditIcon from "../components/icons/EditIcon.vue";
 import SearchInput from "../components/SearchInput.vue";
 
-interface Client {
+interface Device {
     id: number;
-    name: string;
-    phone: string | null;
+    client: {
+        id: number;
+        name: string;
+    };
+    brand: string;
+    model: string;
+    serial_number: string | null;
     comment: string | null;
 }
 
-interface ClientResource {
-    data: Client[];
+interface DeviceResource {
+    data: Device[];
     meta: {
         current_page: number;
         last_page: number;
@@ -27,43 +32,45 @@ interface ClientResource {
 
 const currentPage = ref(1);
 const lastPage = ref(1);
-const clients = ref<Client[]>([]);
+const devices = ref<Device[]>([]);
 const columnsTable = [
     {key: 'id', label: 'ID'},
-    {key: 'name', label: 'Имя'},
-    {key: 'phone', label: 'Телефон'},
+    {key: 'client', label: 'Клиент'},
+    {key: 'brand', label: 'Бренд'},
+    {key: 'model', label: 'Модель'},
+    {key: 'serial_number', label: 'Серийный номер'},
     {key: 'comment', label: 'Комментарий'}
 ];
 
 const router = useRouter()
 const search = ref('');
 
-const createClient = () => {
-    router.push({name: 'clients.create'})
+const createDevice = () => {
+    router.push({name: 'devices.create'})
 }
 const {showSuccess, showError} = useNotification();
 
-const editClient = (id: number) => {
+const editDevice = (id: number) => {
     router.push({
-        name: 'clients.edit',
+        name: 'devices.edit',
         params: {
             id
         }
     })
 };
 
-const loadClients = async () => {
+const loadDevices = async () => {
     try {
-        const clientResponse = await fetch(`/api/clients?page=${currentPage.value}&search=${encodeURIComponent(search.value)}`);
+        const deviceResponse = await fetch(`/api/devices?page=${currentPage.value}&search=${encodeURIComponent(search.value)}`);
 
-        if (!clientResponse.ok) {
-            showError('Не удалось загрузить клиентов');
+        if (!deviceResponse.ok) {
+            showError('Не удалось загрузить устройства');
             return;
         }
 
-        const response: ClientResource = await clientResponse.json();
+        const response: DeviceResource = await deviceResponse.json();
 
-        clients.value = response.data;
+        devices.value = response.data;
         currentPage.value = response.meta.current_page;
         lastPage.value = response.meta.last_page;
     } catch (error) {
@@ -71,15 +78,15 @@ const loadClients = async () => {
     }
 }
 
-const searchClient = async () => {
+const searchDevice = async () => {
     currentPage.value = 1;
 
-    await loadClients()
+    await loadDevices()
 }
 
-const deleteClient = async (id: number) => {
+const deleteDevice = async (id: number) => {
     try {
-        const response = await fetch(`/api/clients/${id}`, {
+        const response = await fetch(`/api/devices/${id}`, {
             method: 'DELETE',
         });
 
@@ -90,17 +97,17 @@ const deleteClient = async (id: number) => {
         }
 
         if (!response.ok) {
-            showError('Не удалось удалить клиента');
+            showError('Не удалось удалить устройство');
             return;
         }
 
-        if (clients.value.length === 1 && currentPage.value > 1) {
+        if (devices.value.length === 1 && currentPage.value > 1) {
             currentPage.value--;
         }
 
-        await loadClients();
+        await loadDevices();
 
-        showSuccess('Клиент удалён');
+        showSuccess('Устройство удалено');
     } catch (error) {
         showError('Не удалось связаться с сервером');
     }
@@ -113,44 +120,47 @@ const goToPage = async (page: number) => {
 
     currentPage.value = page;
 
-    await loadClients();
+    await loadDevices();
 };
 
-onMounted(loadClients);
+onMounted(loadDevices);
 </script>
 
 <template>
     <div class="flex items-center justify-between">
-        <PageTitle title="Клиенты"/>
+        <PageTitle title="Устройства"/>
 
         <SearchInput
             v-model="search"
-            @search="searchClient"/>
+            @search="searchDevice"/>
 
-        <DefaultButton text="Новый клиент" @click="createClient"/>
+        <DefaultButton text="Новое устройство" @click="createDevice"/>
     </div>
 
-    <DefaultTable :columns="columnsTable" :rows="clients" v-if="clients.length > 0">
-        <template #actions="{ row }">
+    <DefaultTable :columns="columnsTable" :rows="devices" v-if="devices.length > 0">
+        <template #client="{row}">
+            {{ row.client.name }}, ID: {{row.client.id}}
+        </template>
+        <template #actions="{row}">
             <button type="button"
                     class="cursor-pointer text-blue-600 hover:text-blue-800 h-5 w-5 flex items-center justify-center"
-                    @click="editClient(row.id)">
+                    @click="editDevice(row.id)">
                 <EditIcon/>
             </button>
             <button type="button"
                     class="cursor-pointer text-red-600 hover:text-red-800 h-5 w-5 flex items-center justify-center"
-                    @click="deleteClient(row.id)">
+                    @click="deleteDevice(row.id)">
                 <DeleteIcon/>
             </button>
         </template>
     </DefaultTable>
 
     <div v-else class="mt-6 flex min-h-48 items-center justify-center text-gray-500">
-        Клиенты не найдены
+        Устройства не найдены
     </div>
 
     <Pagination
-        v-if="clients.length > 0"
+        v-if="devices.length > 0"
         :current-page="currentPage"
         :last-page="lastPage"
         @change="goToPage"

@@ -6,15 +6,9 @@ import DashboardStats from "../components/DashboardStats.vue";
 
 
 <template>
-    <div>
-        <PageTitle title="Главная"/>
+    <PageTitle title="Главная"/>
 
-        <DashboardStats/>
+    <DashboardStats/>
 
-        <RecentRepairs/>
-    </div>
+    <RecentRepairs/>
 </template>
-
-<style scoped>
-
-</style>
