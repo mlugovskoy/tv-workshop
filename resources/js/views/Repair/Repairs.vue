@@ -152,7 +152,7 @@ onMounted(loadRepairs);
 
 <template>
     <div class="flex items-center justify-between">
-        <PageTitle title="Ремонты" subtitle="Список телевизоров в ремонте"/>
+        <PageTitle title="Ремонты" subtitle="Список устройств в ремонте"/>
 
         <DefaultButton text="Новый ремонт" @click="createRepair"/>
     </div>

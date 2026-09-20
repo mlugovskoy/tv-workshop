@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import FormLabel from "../../components/FormLabel.vue";
+
 interface Client {
     id: number;
     name: string;
@@ -72,7 +74,7 @@ const selectDevice = (device: Device) => {
         class="border-t border-gray-200 pt-6"
     >
         <label class="block text-sm font-medium text-gray-700">
-            Телевизор
+            Устройство
         </label>
 
         <div class="mt-4 flex gap-6">
@@ -85,7 +87,7 @@ const selectDevice = (device: Device) => {
                 >
 
                 <span class="text-sm text-gray-700">
-                            Существующий телевизор
+                            Существующее устройство
                         </span>
             </label>
 
@@ -98,7 +100,7 @@ const selectDevice = (device: Device) => {
                 >
 
                 <span class="text-sm text-gray-700">
-                            Новый телевизор
+                            Новый устройство
                         </span>
             </label>
         </div>
@@ -135,7 +137,7 @@ const selectDevice = (device: Device) => {
                 v-else
                 class="mt-2 text-sm text-gray-500"
             >
-                У клиента пока нет зарегистрированных телевизоров.
+                У клиента пока нет зарегистрированных устройств.
             </div>
         </div>
 
@@ -144,12 +146,7 @@ const selectDevice = (device: Device) => {
             class="mt-4 grid grid-cols-2 gap-4"
         >
             <div>
-                <label
-                    for="existing_client_brand"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Бренд
-                </label>
+                <FormLabel text="Бренд" required/>
 
                 <input
                     id="existing_client_brand"
@@ -168,12 +165,7 @@ const selectDevice = (device: Device) => {
             </div>
 
             <div>
-                <label
-                    for="existing_client_model"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Модель
-                </label>
+                <FormLabel text="Модель" required/>
 
                 <input
                     id="existing_client_model"
@@ -195,17 +187,12 @@ const selectDevice = (device: Device) => {
 
     <div class="border-t border-gray-200 pt-6" v-if="props.clientMode === 'new'">
         <h2 class="text-lg font-medium text-gray-900">
-            Телевизор
+            Устройство
         </h2>
 
         <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
-                <label
-                    for="brand"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Бренд
-                </label>
+                <FormLabel text="Бренд" required/>
 
                 <input
                     id="brand"
@@ -221,12 +208,7 @@ const selectDevice = (device: Device) => {
             </div>
 
             <div>
-                <label
-                    for="model"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Модель
-                </label>
+                <FormLabel text="Модель" required/>
 
                 <input
                     id="model"

@@ -4,6 +4,7 @@ import {onMounted, reactive, ref} from "vue";
 import PageTitle from "../../components/PageTitle.vue";
 import DefaultButton from "../../components/DefaultButton.vue";
 import {useNotification} from "../../composables/useNotification";
+import FormLabel from "../../components/FormLabel.vue";
 
 interface Repair {
     id: number;
@@ -180,7 +181,6 @@ onMounted(loadRepair);
             class="space-y-6"
             @submit.prevent="submit"
         >
-            <!-- Клиент -->
             <div>
                 <h2 class="text-base font-semibold text-gray-900">
                     Клиент
@@ -213,10 +213,9 @@ onMounted(loadRepair);
                 </div>
             </div>
 
-            <!-- Телевизор -->
             <div>
                 <h2 class="text-base font-semibold text-gray-900">
-                    Телевизор
+                    Устройство
                 </h2>
 
                 <div class="mt-3 grid grid-cols-3 gap-4">
@@ -258,7 +257,6 @@ onMounted(loadRepair);
                 </div>
             </div>
 
-            <!-- Информация о ремонте -->
             <div>
                 <h2 class="text-base font-semibold text-gray-900">
                     Информация о ремонте
@@ -266,18 +264,13 @@ onMounted(loadRepair);
 
                 <div class="mt-3 space-y-4">
                     <div>
-                        <label
-                            for="problem_description"
-                            class="block text-sm font-medium text-gray-700"
-                        >
-                            Описание проблемы
-                        </label>
+                        <FormLabel text="Описание проблемы" required/>
 
                         <textarea
                             id="problem_description"
                             v-model="form.problem_description"
                             rows="4"
-                            class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-2 block w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
                         />
 
                         <p
@@ -300,7 +293,7 @@ onMounted(loadRepair);
                             id="diagnosis"
                             v-model="form.diagnosis"
                             rows="4"
-                            class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-2 block w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
                             placeholder="Например, неисправен блок питания"
                         />
 
@@ -324,7 +317,7 @@ onMounted(loadRepair);
                             id="repair_description"
                             v-model="form.repair_description"
                             rows="4"
-                            class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            class="mt-2 block w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
                             placeholder="Например, заменён блок питания"
                         />
 

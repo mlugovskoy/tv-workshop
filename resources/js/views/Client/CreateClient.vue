@@ -4,6 +4,7 @@ import PageTitle from "../../components/PageTitle.vue";
 import DefaultButton from "../../components/DefaultButton.vue";
 import {useNotification} from "../../composables/useNotification";
 import {useRouter} from "vue-router";
+import FormLabel from "../../components/FormLabel.vue";
 
 interface ClientForm {
     name: string;
@@ -75,12 +76,7 @@ const submit = async () => {
 
             <div class="mt-4 grid grid-cols-2 gap-4">
                 <div>
-                    <label
-                        for="name"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Имя
-                    </label>
+                    <FormLabel text="Имя" required/>
 
                     <input
                         id="name"
@@ -96,12 +92,7 @@ const submit = async () => {
                 </div>
 
                 <div>
-                    <label
-                        for="phone"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Телефон
-                    </label>
+                    <FormLabel text="Телефон"/>
 
                     <input
                         id="phone"
@@ -117,12 +108,7 @@ const submit = async () => {
                 </div>
 
                 <div class="col-span-2">
-                    <label
-                        for="comment"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Комментарий
-                    </label>
+                    <FormLabel text="Комментарий"/>
 
                     <input
                         id="comment"

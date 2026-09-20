@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import FormLabel from "../../components/FormLabel.vue";
+
 interface CreateRepairForm {
     client_id: number | null;
     client_name: string;
@@ -38,12 +40,7 @@ const props = defineProps<{
 
         <div class="mt-4 space-y-4">
             <div class="max-w-sm">
-                <label
-                    for="estimated_price"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Предварительная цена
-                </label>
+                <FormLabel text="Предварительная цена"/>
 
                 <input
                     id="estimated_price"
@@ -63,12 +60,7 @@ const props = defineProps<{
                 </p>
             </div>
             <div class="col-span-2">
-                <label
-                    for="problem_description"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Что случилось?
-                </label>
+                <FormLabel text="Описание проблемы" required/>
 
                 <textarea
                     id="problem_description"

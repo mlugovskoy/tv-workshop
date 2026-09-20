@@ -4,6 +4,7 @@ import PageTitle from "../../components/PageTitle.vue";
 import DefaultButton from "../../components/DefaultButton.vue";
 import {useNotification} from "../../composables/useNotification";
 import {useRouter} from "vue-router";
+import FormLabel from "../../components/FormLabel.vue";
 
 interface Client {
     id: number;
@@ -112,12 +113,7 @@ onMounted(loadClients);
 
             <div class="mt-4 grid grid-cols-2 gap-4">
                 <div>
-                    <label
-                        for="client_id"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Клиент
-                    </label>
+                    <FormLabel text="Клиент" required/>
 
                     <select
                         id="client_id"
@@ -132,7 +128,7 @@ onMounted(loadClients);
                             v-for="client in clients"
                             :key="client.id"
                             :value="client.id">
-                            {{ client.name}}
+                            {{ client.name }}
                         </option>
                     </select>
 
@@ -142,12 +138,7 @@ onMounted(loadClients);
                 </div>
 
                 <div>
-                    <label
-                        for="brand"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Бренд
-                    </label>
+                    <FormLabel text="Бренд" required/>
 
                     <input
                         id="brand"
@@ -163,12 +154,7 @@ onMounted(loadClients);
                 </div>
 
                 <div>
-                    <label
-                        for="model"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Модель
-                    </label>
+                    <FormLabel text="Модель" required/>
 
                     <input
                         id="model"
@@ -184,12 +170,7 @@ onMounted(loadClients);
                 </div>
 
                 <div>
-                    <label
-                        for="serial_number"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Серийный номер
-                    </label>
+                    <FormLabel text="Серийный номер"/>
 
                     <input
                         id="serial_number"
@@ -205,19 +186,14 @@ onMounted(loadClients);
                 </div>
 
                 <div class="col-span-2">
-                    <label
-                        for="comment"
-                        class="block text-sm font-medium text-gray-700"
-                    >
-                        Комментарий
-                    </label>
+                    <FormLabel text="Комментарий"/>
 
-                    <input
+                    <textarea
                         id="comment"
                         v-model="form.comment"
-                        type="text"
+                        rows="3"
                         placeholder="Например, Отличное устройство"
-                        class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                        class="mt-2 block w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
                     />
 
                     <p v-if="errors.comment" class="mt-1 text-sm text-red-600">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DefaultButton from "../../components/DefaultButton.vue";
+import FormLabel from "../../components/FormLabel.vue";
 
 interface Client {
     id: number;
@@ -109,12 +110,7 @@ const resetSelection = () => {
             v-if="props.mode === 'new'"
             class="mt-4 grid grid-cols-2 gap-4">
             <div>
-                <label
-                    for="client_name"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Имя
-                </label>
+                <FormLabel text="Имя" required />
 
                 <input
                     id="client_name"
@@ -130,12 +126,7 @@ const resetSelection = () => {
             </div>
 
             <div>
-                <label
-                    for="phone"
-                    class="block text-sm font-medium text-gray-700"
-                >
-                    Телефон
-                </label>
+                <FormLabel text="Телефон" />
 
                 <input
                     id="phone"

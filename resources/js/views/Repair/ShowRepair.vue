@@ -290,7 +290,7 @@ onMounted(loadRepair);
 
             <div class="rounded-lg border border-gray-200 bg-white p-6">
                 <h2 class="text-base font-semibold text-gray-900">
-                    Телевизор
+                    Устройство
                 </h2>
 
                 <div class="mt-5 space-y-4">

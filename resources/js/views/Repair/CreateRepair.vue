@@ -138,7 +138,7 @@ const submit = async () => {
         deviceMode.value === 'existing' &&
         !selectedDevice.value
     ) {
-        showError('Выберите телевизор');
+        showError('Выберите устройство');
         return;
     }
 
@@ -216,7 +216,7 @@ const loadClientDevices = async (clientId: number) => {
         );
 
         if (!response.ok) {
-            showError('Не удалось загрузить телевизоры клиента');
+            showError('Не удалось загрузить устройства клиента');
             return;
         }
 
