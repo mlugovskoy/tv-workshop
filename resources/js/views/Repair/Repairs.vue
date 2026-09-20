@@ -56,8 +56,8 @@ const repairs = ref<Repair[]>([]);
 const {showSuccess, showError} = useNotification();
 const columnsTable = [
     {key: 'id', label: 'ID'},
-    {key: 'client', label: 'Клиент'},
     {key: 'device', label: 'Устройство'},
+    {key: 'client', label: 'Клиент'},
     {key: 'status', label: 'Статус'},
     {key: 'estimated_price', label: 'Предварительная цена'},
     {key: 'final_price', label: 'Итоговая цена'},
@@ -81,7 +81,8 @@ const editRepair = (id: number) => {
         name: 'repairs.edit',
         params: {
             id
-        }
+        },
+        query: {from: 'list'}
     })
 };
 
@@ -167,7 +168,7 @@ onMounted(loadRepairs);
             </button>
         </template>
         <template #client="{ row }">
-            {{ row.client.name }}
+            {{ row.client.name }}, ID: {{ row.client.id }}
         </template>
         <template #status="{ row }">
             {{ repairStatusLabels[row.status] ?? row.status }}

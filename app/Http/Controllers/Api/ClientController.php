@@ -9,6 +9,7 @@ use App\Http\Requests\ClientUpdateRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ClientController extends Controller
@@ -37,16 +38,14 @@ class ClientController extends Controller
             });
         }
 
-        return ClientResource::collection(
-            $query->paginate($perPage)
-        );
+        return ClientResource::collection($query->paginate($perPage));
     }
 
     public function store(ClientStoreRequest $request): JsonResponse
     {
         $client = Client::create($request->validated());
 
-        return response()->json(new ClientResource($client), 201);
+        return (new ClientResource($client))->toResponse($request)->setStatusCode(201);
     }
 
     public function show(Client $client): ClientResource
@@ -54,14 +53,14 @@ class ClientController extends Controller
         return new ClientResource($client);
     }
 
-    public function update(ClientUpdateRequest $request, Client $client): JsonResponse
+    public function update(ClientUpdateRequest $request, Client $client): ClientResource
     {
         $client->update($request->validated());
 
-        return response()->json(new ClientResource($client));
+        return new ClientResource($client);
     }
 
-    public function destroy(Client $client): JsonResponse
+    public function destroy(Client $client): Response|JsonResponse
     {
         if ($client->devices()->exists() || $client->repairs()->exists()) {
             return response()->json([
@@ -71,6 +70,6 @@ class ClientController extends Controller
 
         $client->delete();
 
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

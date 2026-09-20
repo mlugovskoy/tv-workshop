@@ -127,13 +127,30 @@ const submit = async () => {
         }
 
         showSuccess('Ремонт успешно изменен');
-        router.push('/repairs');
+        await goBack()
     } catch (error) {
         showError('Не удалось связаться с сервером');
     } finally {
         isSubmitting.value = false;
     }
 };
+
+const goBack = async () => {
+    if (route.query.from === 'show') {
+        await router.push({
+            name: 'repairs.show',
+            params: {
+                id: route.params.id
+            }
+        })
+
+        return;
+    }
+
+    await router.push({
+        name: 'repairs'
+    })
+}
 
 onMounted(loadRepair);
 </script>

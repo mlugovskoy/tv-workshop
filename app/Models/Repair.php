@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\RepairStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Repair extends Model
 {
@@ -30,6 +31,11 @@ class Repair extends Model
     public function device(): BelongsTo
     {
         return $this->belongsTo(Device::class);
+    }
+
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(RepairStatusHistory::class);
     }
 
     protected function casts(): array

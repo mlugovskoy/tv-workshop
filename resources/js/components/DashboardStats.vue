@@ -1,22 +1,31 @@
 <script setup lang="ts">
+import {formatPrice} from "../utils/formatPrice";
+
+interface DashboardStatistics {
+    in_repair: number;
+    ready: number;
+    new_this_month: number;
+    revenue_this_month: string;
+}
+
+defineProps<{
+    statistics: DashboardStatistics;
+}>();
+
 const stats = [
     {
-        title: 'Новые',
-        value: 5,
+        key: 'new_this_month',
+        title: 'Новые за месяц',
     },
     {
+        key: 'in_repair',
         title: 'В ремонте',
-        value: 8,
     },
     {
-        title: 'Ждут запчасть',
-        value: 3,
-    },
-    {
+        key: 'ready',
         title: 'Готовы',
-        value: 4,
     },
-]
+] as const;
 </script>
 
 <template>
@@ -29,7 +38,17 @@ const stats = [
                 </span>
 
             <strong class="mt-2 block text-3xl font-semibold">
-                {{ stat.value }}
+                {{ statistics[stat.key] }}
+            </strong>
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-white p-5">
+            <span class="text-sm text-slate-600">
+                Выручка за месяц
+            </span>
+
+            <strong class="mt-2 block text-3xl font-semibold">
+                {{ formatPrice(statistics.revenue_this_month) }}
             </strong>
         </div>
     </div>

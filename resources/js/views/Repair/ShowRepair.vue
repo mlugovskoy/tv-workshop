@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import {useRoute, useRouter} from 'vue-router';
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, ref} from "vue";
 import PageTitle from "../../components/PageTitle.vue";
-import DefaultButton from "../../components/DefaultButton.vue";
 import {useNotification} from "../../composables/useNotification";
 import {formatPrice} from "../../utils/formatPrice";
 import {formatDate} from "../../utils/formatDate";
 import {repairStatusLabels} from "../../utils/repairStatusLabels";
+
+interface StatusHistory {
+    id: number;
+    status: string;
+    created_at: string;
+}
 
 interface Repair {
     id: number;
@@ -22,6 +27,7 @@ interface Repair {
         serial_number: string | null;
     };
     status: string;
+    status_history: StatusHistory[];
     problem_description: string;
     diagnosis: string | null;
     repair_description: string | null;
@@ -41,9 +47,51 @@ const repair = ref<Repair | null>(null);
 
 const isLoading = ref(false);
 const isDeleting = ref(false);
+const isChangingStatus = ref(false);
 
 const getStatusLabel = (status: string): string => {
     return repairStatusLabels[status] ?? status;
+};
+
+const changeStatus = async (status: string) => {
+    if (!repair.value || status === repair.value.status) {
+        return;
+    }
+
+    isChangingStatus.value = true;
+
+    try {
+        const statusResponse = await fetch(
+            `/api/repairs/${repair.value.id}/status`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                },
+                body: JSON.stringify({
+                    status,
+                }),
+            }
+        );
+
+        if (!statusResponse.ok) {
+            const errorResponse = await statusResponse.json();
+
+            showError(errorResponse.message ?? 'Не удалось изменить статус');
+
+            return;
+        }
+
+        const response = await statusResponse.json();
+
+        repair.value = response.data;
+
+        showSuccess('Статус успешно изменен');
+    } catch {
+        showError('Не удалось связаться с сервером');
+    } finally {
+        isChangingStatus.value = false;
+    }
 };
 
 const loadRepair = async () => {
@@ -120,7 +168,11 @@ onMounted(loadRepair);
             class="flex gap-3"
         >
             <RouterLink
-                :to="`/repairs/${repair.id}/edit`"
+                :to="{
+                    name: 'repairs.edit',
+                    params: {id:repair.id},
+                    query: {from: 'show'}
+                }"
                 class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
                 Редактировать
@@ -156,11 +208,22 @@ onMounted(loadRepair);
                     Ремонт №{{ repair.id }}
                 </h2>
 
-                <span
-                    class="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700"
-                >
-                    {{ getStatusLabel(repair.status) }}
-                </span>
+                <div class="flex items-center gap-3">
+                    <select
+                        :value="repair.status"
+                        :disabled="isChangingStatus"
+                        class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        @change="changeStatus(($event.target as HTMLSelectElement).value)"
+                    >
+                        <option
+                            v-for="(status, key) in repairStatusLabels"
+                            :key="key"
+                            :value="key"
+                        >
+                            {{ getStatusLabel(key) }}
+                        </option>
+                    </select>
+                </div>
             </div>
 
             <div class="mt-6 grid grid-cols-3 gap-6">
@@ -316,6 +379,30 @@ onMounted(loadRepair);
 
                     <p class="mt-1 text-lg font-semibold text-gray-900">
                         {{ formatPrice(repair.final_price) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="rounded-lg border border-gray-200 bg-white p-6">
+            <h2 class="text-base font-semibold text-gray-900">
+                История ремонта
+            </h2>
+
+            <div class="mt-5 divide-y divide-gray-100">
+                <div
+                    v-for="history in repair.status_history"
+                    :key="history.id"
+                    class="flex items-center gap-4 py-3 first:pt-0 last:pb-0"
+                >
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ getStatusLabel(history.status) }}
+                        </p>
+                    </div>
+
+                    <p class="text-sm text-gray-500">
+                        {{ formatDate(history.created_at) }}
                     </p>
                 </div>
             </div>

@@ -72,11 +72,11 @@ const router = createRouter({
             name: 'clients.edit',
             component: EditClient,
         },
-        {
-            path: '/parts',
-            name: 'parts',
-            component: Parts,
-        },
+        // {
+        //     path: '/parts',
+        //     name: 'parts',
+        //     component: Parts,
+        // },
     ],
 });
 

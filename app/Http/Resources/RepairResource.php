@@ -18,6 +18,17 @@ class RepairResource extends JsonResource
             'id' => $this->id,
 
             'status' => $this->status,
+            'status_history' => $this->whenLoaded(
+                'statusHistories',
+                fn() => $this->statusHistories
+                    ->sortByDesc('created_at')
+                    ->values()
+                    ->map(fn($history) => [
+                        'id' => $history->id,
+                        'status' => $history->status,
+                        'created_at' => $history->created_at,
+                    ])
+            ),
 
             'problem_description' => $this->problem_description,
             'diagnosis' => $this->diagnosis,

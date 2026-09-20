@@ -12,8 +12,10 @@ use App\Http\Resources\RepairResource;
 use App\Models\Client;
 use App\Models\Device;
 use App\Models\Repair;
+use App\Models\RepairStatusHistory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class RepairController extends Controller
@@ -60,7 +62,7 @@ class RepairController extends Controller
                 ]);
             }
 
-            return Repair::create([
+            $repair = Repair::create([
                 'client_id' => $client->id,
                 'device_id' => $device->id,
                 'status' => 'NEW',
@@ -68,36 +70,70 @@ class RepairController extends Controller
                 'estimated_price' => $data['estimated_price'],
                 'received_at' => now()
             ]);
+
+            RepairStatusHistory::create([
+                'repair_id' => $repair->id,
+                'status' => RepairStatus::NEW
+            ]);
+
+            return $repair;
         });
 
-        return response()->json(new RepairResource($repair), 201);
+
+        return (new RepairResource($repair))->toResponse($request)->setStatusCode(201);
     }
 
     public function show(Repair $repair): RepairResource
     {
-        return new RepairResource($repair);
+        return new RepairResource($repair->load(['client', 'device', 'statusHistories']));
     }
 
-    public function update(RepairUpdateRequest $request, Repair $repair): JsonResponse
+    public function update(RepairUpdateRequest $request, Repair $repair): RepairResource
     {
         $repair->update($request->validated());
 
-        return response()->json(new RepairResource($repair));
+        return new RepairResource($repair);
     }
 
-    public function changeStatus(ChangeRepairStatusRequest $request, Repair $repair): JsonResponse
+    public function changeStatus(ChangeRepairStatusRequest $request, Repair $repair): RepairResource
     {
-        $repair->status = RepairStatus::from($request->validated()['status']);
+        DB::transaction(function () use ($request, $repair) {
+            $status = RepairStatus::from($request->validated()['status']);
 
-        $repair->save();
+            $repair->status = $status;
 
-        return response()->json(new RepairResource($repair));
+            if($status === RepairStatus::READY) {
+               $repair->completed_at ??= now();
+               $repair->issued_at = null;
+            } elseif($status === RepairStatus::ISSUED) {
+                $repair->completed_at ??= now();
+                $repair->issued_at ??= now();
+
+                if($repair->final_price === null && $repair->estimated_price !== null) {
+                    $repair->final_price = $repair->estimated_price;
+                }
+            } else {
+                $repair->completed_at = null;
+                $repair->issued_at = null;
+            }
+
+            $repair->save();
+
+            RepairStatusHistory::create([
+                'repair_id' => $repair->id,
+                'status' => $repair->status
+            ]);
+        });
+
+        $repair->refresh();
+
+        return new RepairResource($repair->load(['client', 'device', 'statusHistories']));
     }
 
-    public function destroy(Repair $repair): JsonResponse
+    public function destroy(Repair $repair): Response
     {
         $repair->delete();
 
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }
