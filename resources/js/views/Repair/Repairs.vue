@@ -10,7 +10,8 @@ import {onMounted, ref} from "vue";
 import {useNotification} from "../../composables/useNotification";
 import {formatDateList} from "../../utils/formatDate";
 import {formatPrice} from "../../utils/formatPrice";
-import {repairStatusLabels} from "../../utils/repairStatusLabels";
+import {repairStatusLabels, repairStatusStyles} from "../../utils/repairStatusLabels";
+import RepairStatusBadge from "../../components/RepairStatusBadge.vue";
 
 interface Repair {
     id: number;
@@ -171,7 +172,7 @@ onMounted(loadRepairs);
             {{ row.client.name }}, ID: {{ row.client.id }}
         </template>
         <template #status="{ row }">
-            {{ repairStatusLabels[row.status] ?? row.status }}
+            <RepairStatusBadge :status="row.status"/>
         </template>
         <template #device="{ row }">
             {{ row.device.brand }} {{ row.device.model }}

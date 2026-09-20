@@ -5,7 +5,8 @@ import PageTitle from "../../components/PageTitle.vue";
 import {useNotification} from "../../composables/useNotification";
 import {formatPrice} from "../../utils/formatPrice";
 import {formatDate} from "../../utils/formatDate";
-import {repairStatusLabels} from "../../utils/repairStatusLabels";
+import {repairStatusLabels, repairStatusStyles} from "../../utils/repairStatusLabels";
+import RepairStatusBadge from "../../components/RepairStatusBadge.vue";
 
 interface StatusHistory {
     id: number;
@@ -396,9 +397,7 @@ onMounted(loadRepair);
                     class="flex items-center gap-4 py-3 first:pt-0 last:pb-0"
                 >
                     <div>
-                        <p class="text-sm font-medium text-gray-900">
-                            {{ getStatusLabel(history.status) }}
-                        </p>
+                        <RepairStatusBadge :status="history.status"/>
                     </div>
 
                     <p class="text-sm text-gray-500">
