@@ -15,8 +15,6 @@ class NativeAppServiceProvider implements ProvidesPhpIni
     public function boot(): void
     {
         Window::open()->hideMenu()->maximized();
-
-        AutoUpdater::checkForUpdates();
     }
 
     /**
