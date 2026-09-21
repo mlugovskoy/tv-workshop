@@ -24,3 +24,19 @@ Route::post('/app/check-update', function () {
         'message' => 'Проверка обновлений запущена'
     ]);
 });
+
+Route::post('/app/download-update', function () {
+    AutoUpdater::downloadUpdate();
+
+    return response()->json([
+        'message' => 'Загрузка обновления запущена',
+    ]);
+});
+
+Route::post('/app/install-update', function () {
+    AutoUpdater::quitAndInstall();
+
+    return response()->json([
+        'message' => 'Установка обновления запущена',
+    ]);
+});
