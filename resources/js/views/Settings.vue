@@ -1,9 +1,8 @@
-```vue
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
 import DefaultButton from '../components/DefaultButton.vue';
 import {useNotification} from "../composables/useNotification";
-import PageTitle from "@/components/PageTitle.vue";
+import PageTitle from "../components/PageTitle.vue";
 
 interface UpdateAvailablePayload {
     version: string;
@@ -64,7 +63,7 @@ const handleUpdateNotAvailable = () => {
 const handleUpdateError = () => {
     isChecking.value = false;
 
-    showError('Не удалось проверить наличие обновлений');
+    showError('Не удалось проверить обновления');
 };
 
 onMounted(() => {
@@ -171,4 +170,3 @@ onMounted(() => {
         </div>
     </div>
 </template>
-```
