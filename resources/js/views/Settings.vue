@@ -136,7 +136,7 @@ const handleUpdateDownloaded = () => {
     downloadProgress.value = 100;
     updateDownloaded.value = true;
 
-    showSuccess('Обновление скачано и готово к установке');
+    showSuccess('Обновление готово к установке');
 };
 
 onMounted(() => {
