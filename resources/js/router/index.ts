@@ -74,15 +74,15 @@ const router = createRouter({
             component: EditClient,
         },
         {
+            path: '/parts',
+            name: 'parts',
+            component: Parts,
+        },
+        {
             path: '/settings',
             name: 'settings',
             component: Settings
         }
-        // {
-        //     path: '/parts',
-        //     name: 'parts',
-        //     component: Parts,
-        // },
     ],
 });
 
