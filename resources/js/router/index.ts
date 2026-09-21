@@ -12,6 +12,7 @@ import CreateDevice from "../views/Device/CreateDevice.vue";
 import EditDevice from "../views/Device/EditDevice.vue";
 import EditRepair from "../views/Repair/EditRepair.vue";
 import ShowRepair from "../views/Repair/ShowRepair.vue";
+import Settings from "../views/Settings.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -72,6 +73,11 @@ const router = createRouter({
             name: 'clients.edit',
             component: EditClient,
         },
+        {
+            path: '/settings',
+            name: 'settings',
+            component: Settings
+        }
         // {
         //     path: '/parts',
         //     name: 'parts',
