@@ -28,6 +28,7 @@ class RepairController extends Controller
 
         $repairs = Repair::query()
             ->with(['client', 'device'])
+            ->when($data['status'] ?? null, fn($query, $status) => $query->where('status', $status))
             ->orderByDesc('created_at')
             ->paginate($perPage);
 
@@ -102,14 +103,14 @@ class RepairController extends Controller
 
             $repair->status = $status;
 
-            if($status === RepairStatus::READY) {
-               $repair->completed_at ??= now();
-               $repair->issued_at = null;
-            } elseif($status === RepairStatus::ISSUED) {
+            if ($status === RepairStatus::READY) {
+                $repair->completed_at ??= now();
+                $repair->issued_at = null;
+            } elseif ($status === RepairStatus::ISSUED) {
                 $repair->completed_at ??= now();
                 $repair->issued_at ??= now();
 
-                if($repair->final_price === null && $repair->estimated_price !== null) {
+                if ($repair->final_price === null && $repair->estimated_price !== null) {
                     $repair->final_price = $repair->estimated_price;
                 }
             } else {

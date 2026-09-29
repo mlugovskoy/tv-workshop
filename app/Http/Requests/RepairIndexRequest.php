@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\RepairStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RepairIndexRequest extends FormRequest
 {
@@ -15,6 +17,15 @@ class RepairIndexRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('status')) {
+            $this->merge([
+                'status' => strtoupper($this->input('status')),
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,7 +34,8 @@ class RepairIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'per_page' => ['integer', 'min:1', 'max:50']
+            'per_page' => ['integer', 'nullable', 'min:1', 'max:50'],
+            'status' => ['nullable', Rule::enum(RepairStatus::class)],
         ];
     }
 }

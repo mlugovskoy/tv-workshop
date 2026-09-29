@@ -2,16 +2,16 @@
 import PageTitle from "../../components/PageTitle.vue";
 import DefaultButton from "../../components/DefaultButton.vue";
 import DefaultTable from "../../components/DefaultTable.vue";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import Pagination from "../../components/Pagination.vue";
 import EditIcon from "../../components/icons/EditIcon.vue";
 import DeleteIcon from "../../components/icons/DeleteIcon.vue";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useNotification} from "../../composables/useNotification";
 import {formatDateList} from "../../utils/formatDate";
 import {formatPrice} from "../../utils/formatPrice";
-import {repairStatusLabels, repairStatusStyles} from "../../utils/repairStatusLabels";
 import RepairStatusBadge from "../../components/RepairStatusBadge.vue";
+import {repairStatusLabels, repairStatusStyles} from "../../utils/repairStatusLabels";
 
 interface Repair {
     id: number;
@@ -51,6 +51,7 @@ interface RepairResource {
 }
 
 const router = useRouter();
+const route = useRoute();
 const currentPage = ref(1);
 const lastPage = ref(1);
 const repairs = ref<Repair[]>([]);
@@ -64,6 +65,34 @@ const columnsTable = [
     {key: 'final_price', label: 'Итоговая цена'},
     {key: 'received_at', label: 'Дата приёма'}
 ];
+const statusFilter = ref(
+    typeof route.query.status === 'string'
+        ? route.query.status
+        : null
+);
+const clearStatusFilter = async () => {
+    statusFilter.value = null;
+
+    await router.push({name: 'repairs'});
+
+    await loadRepairs();
+};
+
+const statusFilterLabel = computed(() => {
+    if (!statusFilter.value) {
+        return null;
+    }
+
+    return repairStatusLabels[statusFilter.value.toUpperCase()] ?? statusFilter.value;
+});
+
+const statusFilterStyle = computed(() => {
+    if (!statusFilter.value) {
+        return null;
+    }
+
+    return repairStatusStyles[statusFilter.value.toUpperCase()] ?? null;
+});
 
 const createRepair = () => {
     router.push({name: 'repairs.create'})
@@ -89,7 +118,15 @@ const editRepair = (id: number) => {
 
 const loadRepairs = async () => {
     try {
-        const repairResponse = await fetch(`/api/repairs?page=${currentPage.value}`);
+        const params = new URLSearchParams({
+            page: String(currentPage.value),
+        });
+
+        if (statusFilter.value) {
+            params.set('status', statusFilter.value);
+        }
+
+        const repairResponse = await fetch(`/api/repairs?${params.toString()}`);
 
         if (!repairResponse.ok) {
             showError('Не удалось загрузить список ремонтов');
@@ -154,6 +191,30 @@ onMounted(loadRepairs);
 <template>
     <div class="flex items-center justify-between">
         <PageTitle title="Ремонты" subtitle="Список устройств в ремонте"/>
+
+        <div
+            v-if="statusFilter"
+            class="flex gap-2 items-center justify-between rounded-lg px-4 py-3"
+            :class="statusFilterStyle"
+        >
+            <div class="flex items-center gap-2">
+                <p class="text-sm text-green-700">
+                    Фильтр по статусу:
+                </p>
+
+                <p class="text-sm font-medium">
+                    {{ statusFilterLabel }}
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="cursor-pointer text-sm underline text-green-700 hover:no-underline"
+                @click="clearStatusFilter"
+            >
+                Сбросить
+            </button>
+        </div>
 
         <DefaultButton text="Новый ремонт" @click="createRepair"/>
     </div>

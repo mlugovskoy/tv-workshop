@@ -4,6 +4,7 @@ import RecentRepairs from "../components/RecentRepairs.vue";
 import DashboardStats from "../components/DashboardStats.vue";
 import {useNotification} from "../composables/useNotification";
 import {onMounted, ref} from "vue";
+import QuickActions from "../components/QuickActions.vue";
 
 interface DashboardStatistics {
     in_repair: number;
@@ -75,6 +76,8 @@ onMounted(loadDashboard);
 
     <template v-else-if="dashboard">
         <DashboardStats :statistics="dashboard.statistics"/>
+
+        <QuickActions :ready-repairs="dashboard.statistics.ready"/>
 
         <RecentRepairs :repairs="dashboard.recent_repairs"/>
     </template>
