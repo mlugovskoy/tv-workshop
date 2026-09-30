@@ -20,9 +20,12 @@ class DashboardController extends Controller
             ->orWhere('status', RepairStatus::DIAGNOSTICS)
             ->count();
 
+        $issued = Repair::query()
+            ->where('status', RepairStatus::ISSUED)
+            ->count();
+
         $ready = Repair::query()
             ->where('status', RepairStatus::READY)
-            ->orWhere('status', RepairStatus::ISSUED)
             ->count();
 
         $newThisMonth = Repair::query()
@@ -42,6 +45,7 @@ class DashboardController extends Controller
 
         return new DashboardResource([
             'in_repair' => $inRepair,
+            'issued' => $issued,
             'ready' => $ready,
             'new_this_month' => $newThisMonth,
             'revenue_this_month' => $revenueThisMonth,

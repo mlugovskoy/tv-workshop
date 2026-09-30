@@ -3,7 +3,7 @@ import {formatPrice} from "../utils/formatPrice";
 
 interface DashboardStatistics {
     in_repair: number;
-    ready: number;
+    issued: number;
     new_this_month: number;
     revenue_this_month: string;
 }
@@ -22,8 +22,8 @@ const stats = [
         title: 'В ремонте',
     },
     {
-        key: 'ready',
-        title: 'Готовы',
+        key: 'issued',
+        title: 'Выданных',
     },
 ] as const;
 </script>

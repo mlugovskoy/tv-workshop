@@ -9,6 +9,7 @@ import QuickActions from "../components/QuickActions.vue";
 interface DashboardStatistics {
     in_repair: number;
     ready: number;
+    issued: number;
     new_this_month: number;
     revenue_this_month: string;
 }

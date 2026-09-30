@@ -17,6 +17,7 @@ class DashboardResource extends JsonResource
         return [
             'statistics' => [
                 'in_repair' => $this['in_repair'],
+                'issued' => $this['issued'],
                 'ready' => $this['ready'],
                 'new_this_month' => $this['new_this_month'],
                 'revenue_this_month' => $this['revenue_this_month'],
