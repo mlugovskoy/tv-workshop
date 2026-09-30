@@ -2,6 +2,7 @@
 import {useRouter} from "vue-router";
 import AddIcon from "./icons/AddIcon.vue";
 import CheckIcon from "./icons/CheckIcon.vue";
+import {pluralizeRepairs} from "../utils/pluralizeRepairs";
 
 interface Props {
     readyRepairs: number;
@@ -64,7 +65,9 @@ const goToReadyRepairs = () => {
                     </span>
 
                     <span class="mt-1 text-sm text-slate-600">
-                        {{ readyRepairs }} готовых ремонтов
+                        {{ readyRepairs }} {{
+                            pluralizeRepairs(readyRepairs, 'готовый ремонт', 'готовых ремонта', 'готовых ремонтов')
+                        }}
                     </span>
                 </span>
             </span>
