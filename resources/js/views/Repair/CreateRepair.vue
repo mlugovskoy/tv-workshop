@@ -3,7 +3,7 @@ import PageTitle from "../../components/PageTitle.vue";
 import DefaultButton from "../../components/DefaultButton.vue";
 import {reactive, ref} from "vue";
 import {useNotification} from "../../composables/useNotification";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import ClientSection from "./ClientSection.vue";
 import DeviceSection from "./DeviceSection.vue";
 import RepairSection from "./RepairSection.vue";
@@ -82,6 +82,7 @@ const isSubmitting = ref(false);
 
 const errors = reactive<ValidationErrors>({});
 
+const route = useRoute();
 const router = useRouter();
 const {showSuccess, showError} = useNotification();
 
@@ -198,8 +199,7 @@ const submit = async () => {
         }
 
         showSuccess('Ремонт успешно создан');
-
-        await router.push('/repairs');
+        await goBack();
     } catch (error) {
         showError('Не удалось связаться с сервером');
     } finally {
@@ -303,6 +303,16 @@ const resetClientSelection = () => {
 
     form.brand = '';
     form.model = '';
+};
+
+const goBack = async () => {
+    if (route.query.from === 'dashboard') {
+        await router.push({name: 'dashboard'})
+
+        return;
+    }
+
+    await router.push({name: 'repairs'})
 };
 </script>
 

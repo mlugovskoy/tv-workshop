@@ -12,7 +12,7 @@ defineProps<Props>();
 const router = useRouter();
 
 const goToCreateRepair = () => {
-    router.push({name: 'repairs.create'});
+    router.push({name: 'repairs.create', query: {from: 'dashboard'}});
 };
 
 const goToReadyRepairs = () => {

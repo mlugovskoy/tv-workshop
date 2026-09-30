@@ -80,7 +80,6 @@ class RepairController extends Controller
             return $repair;
         });
 
-
         return (new RepairResource($repair))->toResponse($request)->setStatusCode(201);
     }
 
