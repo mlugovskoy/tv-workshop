@@ -17,7 +17,7 @@ class BackupController extends Controller
             ->button('Создать')
             ->defaultPath('TV Workshop Backup ' . now()->format('Y-m-d H-i-s') . '.sqlite')
             ->filter('SQLite database', ['sqlite'])
-            ->open();
+            ->save();
 
         if (!$path) {
             return response()->json(['cancelled' => true]);
