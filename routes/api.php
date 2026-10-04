@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BackupController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DeviceController;
@@ -14,3 +15,5 @@ Route::apiResource('repairs', RepairController::class);
 Route::patch('/repairs/{repair}/status', [RepairController::class, 'changeStatus'])->name('repairs.status');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::post('/backup', [BackupController::class, 'store']);

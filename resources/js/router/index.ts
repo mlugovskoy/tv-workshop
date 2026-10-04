@@ -77,6 +77,11 @@ const router = createRouter({
             path: '/parts',
             name: 'parts',
             component: Parts,
+        },
+        {
+            path: '/settings',
+            name: 'settings',
+            component: Settings,
         }
     ],
 });

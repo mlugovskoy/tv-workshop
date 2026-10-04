@@ -26,6 +26,9 @@ return [
     |
     */
 
+    'version' => env('NATIVEPHP_APP_VERSION', '1.0.0'),
+
+
     'env' => env('APP_ENV', 'production'),
 
     /*

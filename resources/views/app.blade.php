@@ -9,6 +9,9 @@
     <title>Мастерская</title>
 </head>
 <body>
+<script>
+    window.APP_VERSION = @json(config('app.version'));
+</script>
 <div id="app"></div>
 </body>
 </html>
