@@ -91,11 +91,10 @@ class BackupController extends Controller
 
             $q = fn(string $name) => '"' . str_replace('"', '""', $name) . '"';
 
-            $pdo->exec('PRAGMA foreign_keys = OFF');
-            $pdo->exec('ATTACH DATABASE ' . $pdo->quote($path) . ' AS backup');
-
-
             try {
+                $pdo->exec('PRAGMA foreign_keys = OFF');
+                $pdo->exec('ATTACH DATABASE ' . $pdo->quote($path) . ' AS backup');
+
                 $pdo->exec('BEGIN');
 
                 $objects = $pdo->query(
@@ -159,6 +158,8 @@ class BackupController extends Controller
                 $pdo->exec('PRAGMA foreign_keys = ON');
             }
 
+            $this->cleanupSafetyBackups($databasePath);
+
             return response()->json([
                 'cancelled' => false,
                 'filename' => basename($path)
@@ -169,6 +170,24 @@ class BackupController extends Controller
             return response()->json([
                 'message' => 'Не удалось восстановить резервную копию: ' . $e->getMessage(),
             ], 500);
+        }
+    }
+
+    private function cleanupSafetyBackups(string $databasePath, int $keep = 3): void
+    {
+        $dir = dirname($databasePath);
+        $prefix = basename($databasePath) . '.before-restore-';
+
+        $files = [];
+
+        foreach (scandir($dir) ?: [] as $file) {
+            if (str_starts_with($file, $prefix) && str_ends_with($file, '.sqlite')) {
+                $files[] = $dir . DIRECTORY_SEPARATOR . $file;
+            }
+        }
+
+        foreach (array_slice($files, 0, max(0, count($files) - $keep)) as $old) {
+            @unlink($old);
         }
     }
 }
