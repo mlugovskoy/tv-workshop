@@ -17,3 +17,4 @@ Route::patch('/repairs/{repair}/status', [RepairController::class, 'changeStatus
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::post('/backup', [BackupController::class, 'store']);
+Route::post('/backup/restore', [BackupController::class, 'restore']);

@@ -23,6 +23,7 @@ const createBackup = async () => {
 
         if (!response.ok) {
             showError(data.message ?? 'Не удалось создать резервную копию');
+            return;
         }
 
         if (data.cancelled) {
@@ -32,6 +33,50 @@ const createBackup = async () => {
         showSuccess('Резервная копия успешно создана');
     } catch (error) {
         showError(error.message || "Не удалось создать резервную копию");
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const restoreBackup = async () => {
+    const confirmed = window.confirm(
+        'Восстановление заменит текущие данные CRM данными из резервной копии.\n\n' +
+        'Перед восстановлением текущая база будет автоматически сохранена.\n\n' +
+        'Продолжить?'
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    isLoading.value = true;
+
+    try {
+        const response = await fetch("/api/backup/restore", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showError(data.message ?? 'Не удалось восстановить резервную копию');
+            return;
+        }
+
+        if (data.cancelled) {
+            return;
+        }
+
+        showSuccess('Резервная копия успешно восстановлена');
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    } catch (error) {
+        showError(error.message ?? 'Не удалось восстановить резервную копию');
     } finally {
         isLoading.value = false;
     }
@@ -55,22 +100,42 @@ const createBackup = async () => {
             </p>
         </div>
 
-        <div class="flex items-center justify-between gap-6">
-            <div>
-                <h3 class="text-sm font-medium text-slate-900">
-                    Создать резервную копию
-                </h3>
+        <div class="flex gap-4 flex-col">
+            <div class="flex items-center justify-between gap-6">
+                <div>
+                    <h3 class="text-sm font-medium text-slate-900">
+                        Создать резервную копию
+                    </h3>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    Выберите место, куда будет сохранена копия базы данных.
-                </p>
+                    <p class="mt-1 text-sm text-slate-500">
+                        Выберите место, куда будет сохранена копия базы данных.
+                    </p>
+                </div>
+
+                <DefaultButton
+                    :is-disabled="isLoading"
+                    :text="isLoading ? 'Создание...' : 'Создать копию'"
+                    @click="createBackup"
+                />
             </div>
 
-            <DefaultButton
-                :is-disabled="isLoading"
-                :text="isLoading ? 'Создание...' : 'Создать копию'"
-                @click="createBackup"
-            />
+            <div class="flex items-center justify-between gap-6">
+                <div>
+                    <h3 class="text-sm font-medium text-slate-900">
+                        Восстановить резервную копию
+                    </h3>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Выберите файл, с резервной копией базы данных.
+                    </p>
+                </div>
+
+                <DefaultButton
+                    :is-disabled="isLoading"
+                    :text="isLoading ? 'Восстановление...' : 'Восстановить копию'"
+                    @click="restoreBackup"
+                />
+            </div>
         </div>
     </section>
 </template>
