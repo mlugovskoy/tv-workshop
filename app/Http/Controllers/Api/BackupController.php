@@ -50,46 +50,34 @@ class BackupController extends Controller
             ->open();
 
         if (!$path) {
-            return response()->json([
-                'cancelled' => true,
-            ]);
+            return response()->json(['cancelled' => true]);
         }
 
         try {
             if (!is_file($path)) {
-                return response()->json([
-                    'message' => 'Файл резервной копии не найден',
-                ], 422);
+                return response()->json(['message' => 'Файл резервной копии не найден'], 422);
             }
 
             $databasePath = DB::connection()->getDatabaseName();
 
             if (!$databasePath || !is_file($databasePath)) {
-                throw new \RuntimeException(
-                    'Текущая база данных не найдена'
-                );
+                throw new \RuntimeException('Текущая база данных не найдена');
             }
 
             $backupPdo = new PDO(
-                'sqlite:' . $path,
-                null,
-                null,
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                ]
+                'sqlite:' . $path, null, null,
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
 
             $integrity = $backupPdo
                 ->query('PRAGMA integrity_check')
                 ->fetchColumn();
 
-            if ($integrity !== 'ok') {
-                return response()->json([
-                    'message' => 'Резервная копия повреждена и не может быть восстановлена',
-                ], 422);
-            }
-
             $backupPdo = null;
+
+            if ($integrity !== 'ok') {
+                return response()->json(['message' => 'Резервная копия повреждена и не может быть восстановлена'], 422);
+            }
 
             $safetyBackupPath =
                 $databasePath
@@ -99,61 +87,87 @@ class BackupController extends Controller
 
             $pdo = DB::connection()->getPdo();
 
-            $pdo->exec(
-                'VACUUM INTO ' . $pdo->quote($safetyBackupPath)
-            );
+            $pdo->exec('VACUUM INTO ' . $pdo->quote($safetyBackupPath));
 
-            DB::disconnect();
+            $q = fn(string $name) => '"' . str_replace('"', '""', $name) . '"';
 
-            $temporaryPath = $databasePath . '.restore.tmp';
+            $pdo->exec('PRAGMA foreign_keys = OFF');
+            $pdo->exec('ATTACH DATABASE ' . $pdo->quote($path) . ' AS backup');
 
-            if (file_exists($temporaryPath)) {
-                unlink($temporaryPath);
+
+            try {
+                $pdo->exec('BEGIN');
+
+                $objects = $pdo->query(
+                    "SELECT type, name FROM main.sqlite_master
+                WHERE name NOT LIKE 'sqlite_%'"
+                )->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach (['trigger', 'view', 'table'] as $type) {
+                    foreach ($objects as $o) {
+                        if ($o['type'] === $type) {
+                            $pdo->exec('DROP ' . strtoupper($type) . ' IF EXISTS main.' . $q($o['name']));
+                        }
+                    }
+                }
+
+                $schema = $pdo->query(
+                    "SELECT type, name, sql FROM backup.sqlite_master
+                 WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%'"
+                )->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($schema as $o) {
+                    if ($o['type'] === 'table') {
+                        $pdo->exec($o['sql']);
+                    }
+                }
+
+                foreach ($schema as $o) {
+                    if ($o['type'] === 'table') {
+                        $pdo->exec(
+                            'INSERT INTO main.' . $q($o['name']) .
+                            ' SELECT * FROM backup.' . $q($o['name'])
+                        );
+                    }
+                }
+
+                $hasSeq = $pdo->query(
+                    "SELECT 1 FROM backup.sqlite_master WHERE name = 'sqlite_sequence'"
+                )->fetchColumn();
+
+                if ($hasSeq) {
+                    $pdo->exec('DELETE FROM main.sqlite_sequence');
+                    $pdo->exec('INSERT INTO main.sqlite_sequence SELECT * FROM backup.sqlite_sequence');
+                }
+
+                foreach (['index', 'view', 'trigger'] as $type) {
+                    foreach ($schema as $o) {
+                        if ($o['type'] === $type) {
+                            $pdo->exec($o['sql']);
+                        }
+                    }
+                }
+
+                $pdo->exec('COMMIT');
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->exec('ROLLBACK');
+                }
+                throw $e;
+            } finally {
+                $pdo->exec('DETACH DATABASE backup');
+                $pdo->exec('PRAGMA foreign_keys = ON');
             }
-
-            if (!copy($path, $temporaryPath)) {
-                throw new \RuntimeException(
-                    'Не удалось подготовить резервную копию для восстановления'
-                );
-            }
-
-            if (!unlink($databasePath)) {
-                throw new \RuntimeException(
-                    'Не удалось заменить текущую базу данных'
-                );
-            }
-
-            if (!rename($temporaryPath, $databasePath)) {
-                throw new \RuntimeException(
-                    'Не удалось установить резервную копию'
-                );
-            }
-
-            DB::purge();
 
             return response()->json([
                 'cancelled' => false,
-                'filename' => basename($path),
+                'filename' => basename($path)
             ]);
         } catch (Throwable $e) {
             report($e);
 
-            if (isset($temporaryPath) && file_exists($temporaryPath)) {
-                @unlink($temporaryPath);
-            }
-
-            if (
-                isset($databasePath, $safetyBackupPath)
-                && !file_exists($databasePath)
-                && file_exists($safetyBackupPath)
-            ) {
-                @copy($safetyBackupPath, $databasePath);
-            }
-
-            DB::purge();
-
             return response()->json([
-                'message' => 'Не удалось восстановить резервную копию',
+                'message' => 'Не удалось восстановить резервную копию: ' . $e->getMessage(),
             ], 500);
         }
     }
