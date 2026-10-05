@@ -23,13 +23,24 @@ class RepairController extends Controller
     public function index(RepairIndexRequest $request): AnonymousResourceCollection
     {
         $data = $request->validated();
+        $sortable = ['id', 'status', 'estimated_price', 'final_price', 'received_at'];
+
+        $dataSortBy = $data['sort_by'] ?? '';
+        $dataSortDir = $data['sort_dir'] ?? '';
+
+        $sortBy = in_array($dataSortBy, $sortable, true)
+            ? $dataSortBy
+            : 'received_at';
+
+        $sortDir = $dataSortDir === 'asc' ? 'asc' : 'desc';
 
         $perPage = $data['per_page'] ?? 9;
 
         $repairs = Repair::query()
             ->with(['client', 'device'])
             ->when($data['status'] ?? null, fn($query, $status) => $query->where('status', $status))
-            ->orderByDesc('created_at')
+            ->orderBy($sortBy, $sortDir)
+            ->when($sortBy !== 'id', fn($query) => $query->orderByDesc('id'))
             ->paginate($perPage);
 
         return RepairResource::collection($repairs);

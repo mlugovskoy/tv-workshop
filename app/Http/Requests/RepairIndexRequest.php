@@ -35,6 +35,8 @@ class RepairIndexRequest extends FormRequest
     {
         return [
             'per_page' => ['integer', 'nullable', 'min:1', 'max:50'],
+            'sort_by' => ['string', 'nullable'],
+            'sort_dir' => ['string', 'nullable'],
             'status' => ['nullable', Rule::enum(RepairStatus::class)],
         ];
     }

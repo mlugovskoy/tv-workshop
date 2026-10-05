@@ -57,14 +57,30 @@ const lastPage = ref(1);
 const repairs = ref<Repair[]>([]);
 const {showSuccess, showError} = useNotification();
 const columnsTable = [
-    {key: 'id', label: 'ID'},
+    {key: 'id', label: 'ID', sortable: true},
     {key: 'device', label: 'Устройство'},
     {key: 'client', label: 'Клиент'},
-    {key: 'status', label: 'Статус'},
-    {key: 'estimated_price', label: 'Предварительная цена'},
-    {key: 'final_price', label: 'Итоговая цена'},
-    {key: 'received_at', label: 'Дата приёма'}
+    {key: 'status', label: 'Статус', sortable: true},
+    {key: 'estimated_price', label: 'Предварительная цена', sortable: true},
+    {key: 'final_price', label: 'Итоговая цена', sortable: true},
+    {key: 'received_at', label: 'Дата приёма', sortable: true}
 ];
+const sortBy = ref<string | null>(null);
+const sortDir = ref<'asc' | 'desc'>('desc');
+
+const toggleSort = async (key: string) => {
+    if (sortBy.value === key) {
+        sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortBy.value = key;
+        sortDir.value = 'asc';
+    }
+
+    currentPage.value = 1;
+
+    await loadRepairs();
+}
+
 const statusFilter = ref(
     typeof route.query.status === 'string'
         ? route.query.status
@@ -124,6 +140,11 @@ const loadRepairs = async () => {
 
         if (statusFilter.value) {
             params.set('status', statusFilter.value);
+        }
+
+        if (sortBy.value) {
+            params.set('sort_by', sortBy.value);
+            params.set('sort_dir', sortDir.value);
         }
 
         const repairResponse = await fetch(`/api/repairs?${params.toString()}`);
@@ -219,7 +240,12 @@ onMounted(loadRepairs);
         <DefaultButton text="Новый ремонт" @click="createRepair"/>
     </div>
 
-    <DefaultTable :columns="columnsTable" :rows="repairs" v-if="repairs.length > 0">
+    <DefaultTable v-if="repairs.length > 0"
+                  :columns="columnsTable"
+                  :rows="repairs"
+                  :sort-by="sortBy"
+                  :sort-dir="sortDir"
+                  @sort="toggleSort">
         <template #id="{ row }">
             <button
                 type="button"
